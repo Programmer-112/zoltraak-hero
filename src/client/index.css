@@ -24,3 +24,24 @@
   height: 100vh; /* 50% of the viewport height */
   width: 100%;
 }
+
+.element {
+  background-image: url('public/frieren_sprite_sheet.png');
+  width: 89px;
+  height: 100px;
+  background-size: 700px 105px;
+}
+
+.animate {
+  animation: attack 0.8s steps(8);
+  animation-iteration-count: 1; /* play once */
+}
+
+@keyframes attack {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -700px 0;
+  }
+}

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import TimerBar from './components/timerBar';
 import { useTimer } from './hooks/useTimer';
 import IsOverScreen from './components/isOverScreen';
@@ -17,6 +17,7 @@ export function App() {
   const [score, setScore] = useState<number>(0);
   const { progress, isTimedOut, resetTimer } = useTimer(7000);
   const [currIndex, setCurrIndex] = useState<number>(0);
+  const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
   const handleRestart = () => {
     resetTimer();
@@ -28,10 +29,14 @@ export function App() {
   const handlePress = (dir: ArrowKey) => {
     setActive(dir);
 
-    if (exampleTask[currIndex] == dir) {
+    if (task[currIndex] == dir) {
       setIsCorrect(true);
 
-      if (currIndex == exampleTask.length - 1) {
+      //If level is finished
+      if (currIndex == task.length - 1) {
+        //play animation
+        setIsAnimating(false);
+        requestAnimationFrame(() => setIsAnimating(true));
         //update difficulty
         if (!(currMaxTaskCount.current >= maxTaskCount)) {
           currMaxTaskCount.current = currMaxTaskCount.current + 1;
@@ -81,13 +86,12 @@ export function App() {
     right: '→',
   };
 
-  const exampleTask: ArrowKey[] = task;
   const baseArrowStyle =
     'flex items-center justify-center w-16 h-16 rounded-xl text-2xl font-bold transition-colors duration-150';
 
   const getClass = (dir: string) =>
     `${baseArrowStyle} ${active === dir ? 'bg-white text-black' : 'bg-gray-400 text-black'}`;
-  
+
   //Keyboard input for desktop
   useEffect(() => {
     // Detect desktop (non-touch)
@@ -135,25 +139,26 @@ export function App() {
           </div>
         </div>
 
-        {/* Main Arrow Display */}
-        <div className="flex items-center justify-center gap-2">
-          {/* Current Arrow */}
-          <div
-            className={`${baseArrowStyle} ${
-              isCorrect === null
-                ? 'text-white bg-gray-700'
-                : isCorrect
-                  ? 'bg-green-500'
-                  : 'bg-red-500'
-            } ${isCorrect === false ? 'shake' : ''}`}
-            style={{ backgroundColor: 'rgba(31, 41, 55, 0.5)' }}
-          >
-            <span>{arrowMap[exampleTask[currIndex]!]}</span>
-          </div>
+        <div className="flex justify-center items-center">
+          <span className={`element ${isAnimating ? 'animate' : ''}`}></span>
+        </div>
 
-          {/* Remaining Arrows */}
-          <div className="flex gap-2">
-            {exampleTask.slice(currIndex + 1, currIndex + 4).map((dir, idx) => (
+        {/* Main Arrow Display */}
+        <div className="w-full flex items-center justify-center">
+          <div className="w-4/5 max-w-[300px] flex justify-start gap-3">
+            {/* Current Arrow */}
+            <div
+              className={`text-white ${baseArrowStyle} ${
+                isCorrect === null ? 'bg-gray-700' : isCorrect ? 'bg-green-500' : 'bg-red-500'
+              } ${isCorrect === false ? 'shake' : ''} `}
+              style={{ backgroundColor: 'rgba(31, 41, 55, 0.5)' }}
+            >
+              <span>{arrowMap[task[currIndex]!]}</span>
+            </div>
+
+            {/* Remaining Arrows */}
+
+            {task.slice(currIndex + 1, currIndex + 4).map((dir, idx) => (
               <div
                 key={idx}
                 className={baseArrowStyle}
@@ -170,14 +175,14 @@ export function App() {
           <button className={getClass('up')} onClick={() => handlePress('up')}>
             {arrowMap.up}
           </button>
-          <button className={getClass('down')} onClick={() => handlePress('down')}>
-            {arrowMap.down}
-          </button>
           <button className={getClass('left')} onClick={() => handlePress('left')}>
             {arrowMap.left}
           </button>
           <button className={getClass('right')} onClick={() => handlePress('right')}>
             {arrowMap.right}
+          </button>
+          <button className={getClass('down')} onClick={() => handlePress('down')}>
+            {arrowMap.down}
           </button>
         </div>
 
