@@ -87,6 +87,33 @@ export function App() {
 
   const getClass = (dir: string) =>
     `${baseArrowStyle} ${active === dir ? 'bg-white text-black' : 'bg-gray-400 text-black'}`;
+  
+  //Keyboard input for desktop
+  useEffect(() => {
+    // Detect desktop (non-touch)
+    const isDesktop = !window.matchMedia('(pointer: coarse)').matches;
+    if (!isDesktop) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case 'ArrowUp':
+          handlePress('up');
+          break;
+        case 'ArrowDown':
+          handlePress('down');
+          break;
+        case 'ArrowLeft':
+          handlePress('left');
+          break;
+        case 'ArrowRight':
+          handlePress('right');
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  });
 
   return (
     <div className="relative w-screen h-screen">
