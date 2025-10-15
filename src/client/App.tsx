@@ -28,6 +28,7 @@ export function App() {
 
   const handlePress = (dir: ArrowKey) => {
     setActive(dir);
+    requestAnimationFrame(() => setIsCorrect(null));
 
     if (task[currIndex] == dir) {
       setIsCorrect(true);
@@ -57,7 +58,6 @@ export function App() {
       setCurrIndex(0);
     }
     setTimeout(() => setActive(null), 200);
-    setTimeout(() => setIsCorrect(null), 200);
   };
 
   // inside App component
@@ -87,7 +87,7 @@ export function App() {
   };
 
   const baseArrowStyle =
-    'flex items-center justify-center w-16 h-16 rounded-xl text-2xl font-bold transition-colors duration-150';
+    'flex items-center justify-center w-16 h-16 rounded-xl text-2xl font-bold transition-colors duration-150 bg-gray-800/50';
 
   const getClass = (dir: string) =>
     `${baseArrowStyle} ${active === dir ? 'bg-white text-black' : 'bg-gray-400 text-black'}`;
@@ -100,14 +100,14 @@ export function App() {
 
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
+        case 'ArrowLeft':
+          handlePress('left');
+          break;
         case 'ArrowUp':
           handlePress('up');
           break;
         case 'ArrowDown':
           handlePress('down');
-          break;
-        case 'ArrowLeft':
-          handlePress('left');
           break;
         case 'ArrowRight':
           handlePress('right');
@@ -148,10 +148,7 @@ export function App() {
           <div className="w-4/5 max-w-[300px] flex justify-start gap-3">
             {/* Current Arrow */}
             <div
-              className={`text-white ${baseArrowStyle} ${
-                isCorrect === null ? 'bg-gray-700' : isCorrect ? 'bg-green-500' : 'bg-red-500'
-              } ${isCorrect === false ? 'shake' : ''} `}
-              style={{ backgroundColor: 'rgba(31, 41, 55, 0.5)' }}
+              className={`text-white ${baseArrowStyle} ${isCorrect === false ? 'shake bg-red-500/50' : ''}  `}
             >
               <span>{arrowMap[task[currIndex]!]}</span>
             </div>
@@ -159,11 +156,7 @@ export function App() {
             {/* Remaining Arrows */}
 
             {task.slice(currIndex + 1, currIndex + 4).map((dir, idx) => (
-              <div
-                key={idx}
-                className={baseArrowStyle}
-                style={{ backgroundColor: 'rgba(31, 41, 55, 0.5)' }}
-              >
+              <div key={idx} className={baseArrowStyle}>
                 {arrowMap[dir]}
               </div>
             ))}
