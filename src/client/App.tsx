@@ -4,12 +4,16 @@ import { useTimer } from './hooks/useTimer';
 import IsOverScreen from './components/isOverScreen';
 import { ArrowKey } from '../shared/types/arrows';
 import { getNewTask } from './utils/taskGenerator';
+import LoadingScreen from './components/loadingScreen';
 
 export function App() {
   const minTaskCount = 3;
   const startingMaxCount = 5;
   const maxTaskCount = 20;
-  const mainAnimationDuration = 500 //ms
+  const mainAnimationDuration = 500; //ms
+  const loadTime = 2000; //ms
+  const buttonClickSoundEffect = new Audio('/button-click.mp3');
+  const beamSoundEffect = new Audio('/magic-spell.mp3');
 
   const currMaxTaskCount = useRef<number>(startingMaxCount);
   const [active, setActive] = useState<string | null>(null);
@@ -28,9 +32,15 @@ export function App() {
     setCurrIndex(0);
   };
 
-  const handlePress = (dir: ArrowKey) => {
+  const playSound = async (sound: HTMLAudioElement) => {
+    sound.currentTime = 0;
+    await sound.play();
+  };
+
+  const handlePress = async (dir: ArrowKey) => {
     setActive(dir);
     setIsCorrect(null);
+    await playSound(buttonClickSoundEffect)
 
     if (task[currIndex] == dir) {
       setIsCorrect(true);
@@ -45,6 +55,8 @@ export function App() {
             setIsAnimating(false);
           }, mainAnimationDuration);
         });
+        //play sound effect
+        await playSound(beamSoundEffect)
         //update difficulty
         if (currMaxTaskCount.current < maxTaskCount) {
           currMaxTaskCount.current = currMaxTaskCount.current + 1;
@@ -101,19 +113,19 @@ export function App() {
 
   //Inject keyboard input for desktop
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handleKeyDown = async (e: KeyboardEvent) => {
       switch (e.key) {
         case 'ArrowLeft':
-          handlePress('left');
+          await handlePress('left');
           break;
         case 'ArrowUp':
-          handlePress('up');
+          await handlePress('up');
           break;
         case 'ArrowDown':
-          handlePress('down');
+          await handlePress('down');
           break;
         case 'ArrowRight':
-          handlePress('right');
+          await handlePress('right');
           break;
       }
     };
