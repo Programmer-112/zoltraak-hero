@@ -28,7 +28,7 @@ export function App() {
 
   const handlePress = (dir: ArrowKey) => {
     setActive(dir);
-    requestAnimationFrame(() => setIsCorrect(null));
+    setIsCorrect(null);
 
     if (task[currIndex] == dir) {
       setIsCorrect(true);
@@ -53,7 +53,7 @@ export function App() {
         setCurrIndex(currIndex + 1);
       }
     } else {
-      setIsCorrect(false);
+      requestAnimationFrame(() => setIsCorrect(false));
       //reset level progress
       setCurrIndex(0);
     }
@@ -165,17 +165,17 @@ export function App() {
 
         {/* Controls */}
         <div className="flex items-center justify-center gap-3">
-          <button className={getClass('up')} onClick={() => handlePress('up')}>
-            {arrowMap.up}
-          </button>
           <button className={getClass('left')} onClick={() => handlePress('left')}>
             {arrowMap.left}
           </button>
-          <button className={getClass('right')} onClick={() => handlePress('right')}>
-            {arrowMap.right}
+          <button className={getClass('up')} onClick={() => handlePress('up')}>
+            {arrowMap.up}
           </button>
           <button className={getClass('down')} onClick={() => handlePress('down')}>
             {arrowMap.down}
+          </button>
+          <button className={getClass('right')} onClick={() => handlePress('right')}>
+            {arrowMap.right}
           </button>
         </div>
 
