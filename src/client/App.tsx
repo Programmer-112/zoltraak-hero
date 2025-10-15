@@ -9,6 +9,7 @@ export function App() {
   const minTaskCount = 3;
   const startingMaxCount = 5;
   const maxTaskCount = 20;
+  const mainAnimationDuration = 500 //ms
 
   const currMaxTaskCount = useRef<number>(startingMaxCount);
   const [active, setActive] = useState<string | null>(null);
@@ -37,9 +38,14 @@ export function App() {
       if (currIndex == task.length - 1) {
         //play animation
         setIsAnimating(false);
-        requestAnimationFrame(() => setIsAnimating(true));
+        requestAnimationFrame(() => {
+          setIsAnimating(true);
+          setTimeout(() => {
+            setIsAnimating(false);
+          }, mainAnimationDuration);
+        });
         //update difficulty
-        if (!(currMaxTaskCount.current >= maxTaskCount)) {
+        if (currMaxTaskCount.current < maxTaskCount) {
           currMaxTaskCount.current = currMaxTaskCount.current + 1;
         }
         //complete level
@@ -94,7 +100,6 @@ export function App() {
 
   //Inject keyboard input for desktop
   useEffect(() => {
-
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
         case 'ArrowLeft':
@@ -135,9 +140,11 @@ export function App() {
             </span>
           </div>
         </div>
-
+        {/* Character animations */}
         <div className="flex justify-center items-center">
           <span className={`element ${isAnimating ? 'animate' : ''}`}></span>
+          <span className={`beam ${isAnimating ? 'animate-beam' : ''}`}></span>
+          <span className={`slime ${isAnimating ? 'animate-slime' : ''}`}></span>
         </div>
 
         {/* Main Arrow Display */}

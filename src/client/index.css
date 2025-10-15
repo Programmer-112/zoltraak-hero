@@ -1,4 +1,9 @@
 @import 'tailwindcss';
+
+:root {
+  --main-animation-time: 0.5s
+}
+
 /* styles.css */
 @keyframes shake {
   0%,
@@ -25,6 +30,11 @@
   width: 100%;
 }
 
+@media (min-width: 640px) { /* small screens */
+  .top-bg { width: 412px; }
+}
+
+
 .element {
   background-image: url('public/frieren_sprite_sheet.png');
   width: 89px;
@@ -33,11 +43,57 @@
 }
 
 .animate {
-  animation: attack 0.8s steps(8);
+  animation: attack var(--main-animation-time) steps(8);
+  animation-iteration-count: 1; /* play once */
+}
+
+.beam {
+  background-image: url('/beam-sprite.png');
+  width: 50px;
+  height: 100px;
+  opacity: 0;
+  background-size: 700px 105px;
+}
+
+.animate-beam {
+  opacity: 1;
+  animation: shoot var(--main-animation-time) linear forwards;
+  animation-iteration-count: 1; /* play once */
+}
+
+.slime {
+  background-image: url('public/slime-sprite-sheet-impact.png');
+  width: 89px;
+  height: 100px;
+  background-size: 700px 105px;
+}
+
+.animate-slime {
+  animation: hurt var(--main-animation-time) steps(6);
   animation-iteration-count: 1; /* play once */
 }
 
 @keyframes attack {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -700px 0;
+  }
+}
+
+@keyframes shoot {
+  from {
+    background-position: 0 0;
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(300%);
+    background-position: -700px 0;
+  }
+}
+
+@keyframes hurt {
   from {
     background-position: 0 0;
   }
