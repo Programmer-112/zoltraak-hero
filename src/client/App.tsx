@@ -92,11 +92,8 @@ export function App() {
   const getClass = (dir: string) =>
     `${baseArrowStyle} ${active === dir ? 'bg-white text-black' : 'bg-gray-400 text-black'}`;
 
-  //Keyboard input for desktop
+  //Inject keyboard input for desktop
   useEffect(() => {
-    // Detect desktop (non-touch)
-    const isDesktop = !window.matchMedia('(pointer: coarse)').matches;
-    if (!isDesktop) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
@@ -122,7 +119,7 @@ export function App() {
   return (
     <div className="relative w-screen h-screen">
       {/* Background image */}
-      <div className="absolute top-0 left-0 bg-center bg-cover bg-no-repeat top-bg" />
+      <div className="absolute left-1/2 -translate-x-1/2 bg-center bg-cover bg-no-repeat top-bg" />
 
       {/* Content on top */}
       <div className="relative z-10 flex flex-col items-center justify-between h-full py-8">
