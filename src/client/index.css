@@ -85,13 +85,14 @@
 @keyframes shoot {
   from {
     background-position: 0 0;
-    transform: translateX(-50%);
+    transform: translateX(-150%);
   }
   to {
     transform: translateX(300%);
     background-position: -700px 0;
   }
 }
+
 
 @keyframes hurt {
   from {
