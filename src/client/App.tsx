@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import TimerBar from './components/timerBar';
 import { useTimer } from './hooks/useTimer';
 import IsOverScreen from './components/isOverScreen';
@@ -12,9 +12,9 @@ export function App() {
   const maxTaskCount = 20;
   const mainAnimationDuration = 500; //ms
   const loadTime = 2000; //ms
-  const buttonClickSoundEffect = new Audio('/button-click.mp3');
-  const beamSoundEffect = new Audio('/magic-spell.mp3');
-  const bgm = new Audio('/background.mp3');
+  const buttonClickSoundEffect = useRef(new Audio('/button-click.mp3')).current;
+  const beamSoundEffect = useRef(new Audio('/magic-spell.mp3')).current;
+  const bgm = useRef(new Audio('/background.mp3')).current;
 
   const currMaxTaskCount = useRef<number>(startingMaxCount);
   const [active, setActive] = useState<string | null>(null);
@@ -99,9 +99,6 @@ export function App() {
   const baseArrowStyle =
     'flex items-center justify-center w-16 h-16 rounded-xl text-2xl font-bold transition-colors duration-150 bg-gray-800/50';
 
-  const getClass = (dir: string) =>
-    `${baseArrowStyle} ${active === dir ? 'bg-white text-black' : 'bg-gray-400 text-black'}`;
-
   //Inject keyboard input for desktop
   useEffect(() => {
     const handleKeyDown = async (e: KeyboardEvent) => {
@@ -131,6 +128,33 @@ export function App() {
       setIsLoading(false);
     }, loadTime);
   });
+
+  useEffect(() => {
+    [buttonClickSoundEffect, beamSoundEffect, bgm].forEach((a) => {
+      a.preload = 'auto';
+    });
+  });
+
+  const ArrowButton = memo(
+    ({
+      dir,
+      onClick,
+      active,
+    }: {
+      dir: ArrowKey;
+      onClick: (dir: ArrowKey) => Promise<void>;
+      active: string | null;
+    }) => {
+      const getClass = (dir: string) =>
+        `${baseArrowStyle} ${active === dir ? 'bg-white text-black' : 'bg-gray-400 text-black'}`;
+
+      return (
+        <button className={getClass(dir)} onClick={() => onClick(dir)}>
+          {arrowMap[dir]}
+        </button>
+      );
+    }
+  );
 
   return (
     <>
@@ -186,18 +210,10 @@ export function App() {
 
             {/* Controls */}
             <div className="flex items-center justify-center gap-3">
-              <button className={getClass('left')} onClick={() => handlePress('left')}>
-                {arrowMap.left}
-              </button>
-              <button className={getClass('up')} onClick={() => handlePress('up')}>
-                {arrowMap.up}
-              </button>
-              <button className={getClass('down')} onClick={() => handlePress('down')}>
-                {arrowMap.down}
-              </button>
-              <button className={getClass('right')} onClick={() => handlePress('right')}>
-                {arrowMap.right}
-              </button>
+              <ArrowButton dir="left" onClick={handlePress} active={active} />
+              <ArrowButton dir="up" onClick={handlePress} active={active} />
+              <ArrowButton dir="down" onClick={handlePress} active={active} />
+              <ArrowButton dir="right" onClick={handlePress} active={active} />
             </div>
 
             {/* Overlay */}
