@@ -14,6 +14,7 @@ export function App() {
   const loadTime = 2000; //ms
   const buttonClickSoundEffect = new Audio('/button-click.mp3');
   const beamSoundEffect = new Audio('/magic-spell.mp3');
+  const bgm = new Audio('/background.mp3');
 
   const currMaxTaskCount = useRef<number>(startingMaxCount);
   const [active, setActive] = useState<string | null>(null);
@@ -24,8 +25,15 @@ export function App() {
   const [currIndex, setCurrIndex] = useState<number>(0);
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isFirstGame, setIsFirstGame] = useState<boolean>(true);
 
-  const handleRestart = () => {
+  const handleGameStart = () => {
+    if (isFirstGame) {
+      setIsFirstGame(false);
+      bgm.loop = true;
+      bgm.volume = 0.5;
+      bgm.play().catch((err) => console.warn('Autoplay blocked:', err));
+    }
     resetTimer();
     setTask(getNewTask(minTaskCount, startingMaxCount));
     setScore(0);
@@ -38,6 +46,8 @@ export function App() {
   };
 
   const handlePress = async (dir: ArrowKey) => {
+    //prevent interaction if game over, resume after game restart
+    if (isTimedOut) return;
     setActive(dir);
     setIsCorrect(null);
     await playSound(buttonClickSoundEffect);
@@ -79,25 +89,6 @@ export function App() {
     setTimeout(() => setActive(null), 200);
   };
 
-  // inside App component
-  // useEffect(() => {
-  //   const handleSubmitScore = async () => {
-  //     try {
-  //       const res = await fetch('/api/leaderboard', {
-  //         method: 'POST',
-  //         headers: { 'Content-Type': 'application/json' },
-  //         body: JSON.stringify({ score }), // replace with actual user ID
-  //       });
-  //       console.log(res)
-  //     } catch (err) {
-  //       console.error('Failed to submit score:', err);
-  //     }
-  //   };
-  //   if (isTimedOut) {
-  //     void handleSubmitScore(); // submit the score when time runs out
-  //   }
-  // }, [isTimedOut]);
-
   const arrowMap: Record<ArrowKey, string> = {
     up: '↑',
     down: '↓',
@@ -134,6 +125,7 @@ export function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   });
 
+  //load screen
   useEffect(() => {
     setTimeout(() => {
       setIsLoading(false);
@@ -209,7 +201,11 @@ export function App() {
             </div>
 
             {/* Overlay */}
-            <IsOverScreen score={score} visible={isTimedOut} onRestart={handleRestart} />
+            <IsOverScreen
+              score={score}
+              visible={isTimedOut || isFirstGame}
+              onRestart={handleGameStart}
+            />
           </div>
         </div>
       )}
