@@ -2,7 +2,6 @@ import express from 'express';
 import { InitResponse } from '../shared/types/api';
 import { redis, reddit, createServer, context, getServerPort } from '@devvit/web/server';
 import { createPost } from './core/post';
-import { getTopScores, submitScore } from './core/leaderBoard';
 
 const app = express();
 
@@ -51,10 +50,6 @@ router.get<{ postId: string }, InitResponse | { status: string; message: string 
     }
   }
 );
-router.get('/api/leaderboard', async (req, res) => {
-  const topScores = await getTopScores();
-  res.json(topScores);
-});
 
 router.post('/internal/on-app-install', async (_req, res): Promise<void> => {
   try {
@@ -87,15 +82,6 @@ router.post('/internal/menu/post-create', async (_req, res): Promise<void> => {
       message: 'Failed to create post',
     });
   }
-});
-
-router.post('/api/leaderboard', async (req, res) => {
-  const { score } = req.body;
-  const username = await reddit.getCurrentUsername();
-  if (username != undefined) {
-    await submitScore(username, score);
-  }
-  res.status(201).send(`Score submitted ${username}`);
 });
 
 // Use router middleware

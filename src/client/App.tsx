@@ -40,7 +40,7 @@ export function App() {
   const handlePress = async (dir: ArrowKey) => {
     setActive(dir);
     setIsCorrect(null);
-    await playSound(buttonClickSoundEffect)
+    await playSound(buttonClickSoundEffect);
 
     if (task[currIndex] == dir) {
       setIsCorrect(true);
@@ -56,7 +56,7 @@ export function App() {
           }, mainAnimationDuration);
         });
         //play sound effect
-        await playSound(beamSoundEffect)
+        await playSound(beamSoundEffect);
         //update difficulty
         if (currMaxTaskCount.current < maxTaskCount) {
           currMaxTaskCount.current = currMaxTaskCount.current + 1;

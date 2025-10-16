@@ -1,5 +1,3 @@
-
-
 // IsOverScreen.tsx
 type Props = {
   visible: boolean;

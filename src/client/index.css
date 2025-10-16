@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 :root {
-  --main-animation-time: 0.5s
+  --main-animation-time: 0.5s;
 }
 
 /* styles.css */
@@ -30,10 +30,12 @@
   width: 100%;
 }
 
-@media (min-width: 640px) { /* small screens */
-  .top-bg { width: 412px; }
+@media (min-width: 640px) {
+  /* small screens */
+  .top-bg {
+    width: 412px;
+  }
 }
-
 
 .element {
   background-image: url('public/frieren_sprite_sheet.png');
@@ -92,7 +94,6 @@
     background-position: -700px 0;
   }
 }
-
 
 @keyframes hurt {
   from {

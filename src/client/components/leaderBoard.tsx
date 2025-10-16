@@ -3,20 +3,19 @@ import { useEffect, useState } from 'react';
 export function Leaderboard() {
   const [scores, setScores] = useState<{ userId: string; score: number }[]>([]);
 
-useEffect(() => {
-  async function fetchScores() {
-    try {
-      const res = await fetch('/api/leaderboard'); // Devvit server endpoint
-      if (!res.ok) throw new Error('Failed to fetch leaderboard');
-      const data = await res.json();
-      setScores(data);
-    } catch (err) {
-      console.error(err);
+  useEffect(() => {
+    async function fetchScores() {
+      try {
+        const res = await fetch('/api/leaderboard'); // Devvit server endpoint
+        if (!res.ok) throw new Error('Failed to fetch leaderboard');
+        const data = await res.json();
+        setScores(data);
+      } catch (err) {
+        console.error(err);
+      }
     }
-  }
-  void fetchScores();
-}, []);
-
+    void fetchScores();
+  }, []);
 
   return (
     <div>

@@ -1,4 +1,4 @@
-import { ArrowKey } from "../../shared/types/arrows";
+import { ArrowKey } from '../../shared/types/arrows';
 
 const ArrowKeys: ArrowKey[] = ['up', 'down', 'left', 'right'];
 
@@ -7,7 +7,7 @@ function randomInt(min: number, max: number) {
 }
 
 // Generates a random task array of ArrowKeys
-export function getNewTask(min: number, max: number ): ArrowKey[] {
+export function getNewTask(min: number, max: number): ArrowKey[] {
   const elemCount = randomInt(min, max);
   const result: ArrowKey[] = new Array(elemCount);
 
