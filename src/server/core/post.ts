@@ -10,11 +10,11 @@ export const createPost = async () => {
     splash: {
       // Splash Screen Configuration
       appDisplayName: 'Zoltraak Hero',
-      backgroundUri: 'default-splash.png',
+      backgroundUri: 'splash.jpg',
       buttonLabel: 'Tap to Start',
-      description: 'An exciting interactive experience',
-      heading: 'Welcome to the Game!',
-      appIconUri: 'default-icon.png',
+      description: 'Press the correct arrows as fast as you can',
+      heading: 'Zoltraak Hero',
+      appIconUri: 'icon.png',
     },
     postData: {
       gameState: 'initial',

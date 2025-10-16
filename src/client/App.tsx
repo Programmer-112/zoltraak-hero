@@ -31,7 +31,7 @@ export function App() {
     if (isFirstGame) {
       setIsFirstGame(false);
       bgm.loop = true;
-      bgm.volume = 0.5;
+      bgm.volume = 0.3;
       bgm.play().catch((err) => console.warn('Autoplay blocked:', err));
     }
     resetTimer();
