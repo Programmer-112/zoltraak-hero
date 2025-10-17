@@ -5,17 +5,21 @@ import IsOverScreen from './components/isOverScreen';
 import { ArrowKey } from '../shared/types/arrows';
 import { getNewTask } from './utils/taskGenerator';
 import LoadingScreen from './components/loadingScreen';
+import { useMultiAudio } from './hooks/useAudioPlayer';
+
+const minTaskCount = 3;
+const startingMaxCount = 5;
+const maxTaskCount = 20;
+const mainAnimationDuration = 500; //ms
+const loadTime = 2000; //ms
+
+const tracks = [
+  { name: 'buttonClickSoundEffect', src: '/button-click.mp3' },
+  { name: 'beamSoundEffect', src: '/magic-spell.mp3' },
+  { name: 'bgm', src: '/background.mp3' },
+];
 
 export function App() {
-  const minTaskCount = 3;
-  const startingMaxCount = 5;
-  const maxTaskCount = 20;
-  const mainAnimationDuration = 500; //ms
-  const loadTime = 2000; //ms
-  const buttonClickSoundEffect = new Audio('/button-click.mp3');
-  const beamSoundEffect = new Audio('/magic-spell.mp3');
-  const bgm = new Audio('/background.mp3');
-
   const currMaxTaskCount = useRef<number>(startingMaxCount);
   const [active, setActive] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -27,12 +31,24 @@ export function App() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isFirstGame, setIsFirstGame] = useState<boolean>(true);
 
-  const handleGameStart = () => {
+  const { audioPlayerInit ,playAudio, loopAudio } = useMultiAudio(tracks);
+
+  const playSound = (trackName: string) => {
+    console.log(`playing ${trackName}`)
+    playAudio(trackName)
+  };
+
+  const loopSound = (trackName: string) => {
+    console.log(`playing ${trackName}`)
+    loopAudio(trackName);
+  };
+
+  //TODO: Optimize sound effect using Web audio api
+  const handleGameStart = async () => {
     if (isFirstGame) {
       setIsFirstGame(false);
-      bgm.loop = true;
-      bgm.volume = 0.3;
-      bgm.play().catch((err) => console.warn('Autoplay blocked:', err));
+      await  audioPlayerInit()
+      await  loopSound('bgm')
     }
     resetTimer();
     setTask(getNewTask(minTaskCount, startingMaxCount));
@@ -40,17 +56,12 @@ export function App() {
     setCurrIndex(0);
   };
 
-  const playSound = async (sound: HTMLAudioElement) => {
-    sound.currentTime = 0;
-    await sound.play();
-  };
-
   const handlePress = async (dir: ArrowKey) => {
     //prevent interaction if game over, resume after game restart
     if (isTimedOut) return;
     setActive(dir);
     setIsCorrect(null);
-    await playSound(buttonClickSoundEffect);
+    playSound('buttonClickSoundEffect');
 
     if (task[currIndex] == dir) {
       setIsCorrect(true);
@@ -66,7 +77,7 @@ export function App() {
           }, mainAnimationDuration);
         });
         //play sound effect
-        await playSound(beamSoundEffect);
+        playSound('beamSoundEffect');
         //update difficulty
         if (currMaxTaskCount.current < maxTaskCount) {
           currMaxTaskCount.current = currMaxTaskCount.current + 1;
@@ -82,7 +93,7 @@ export function App() {
         setCurrIndex(currIndex + 1);
       }
     } else {
-      requestAnimationFrame(() => setIsCorrect(false));
+      setIsCorrect(false);
       //reset level progress
       setCurrIndex(0);
     }
