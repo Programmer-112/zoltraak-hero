@@ -42,6 +42,7 @@
   width: 89px;
   height: 100px;
   background-size: 700px 105px;
+  will-change: background-position, transform;
 }
 
 .animate {
@@ -55,6 +56,7 @@
   height: 100px;
   opacity: 0;
   background-size: 700px 105px;
+  will-change: transform, opacity, background-position;
 }
 
 .animate-beam {
@@ -68,6 +70,7 @@
   width: 89px;
   height: 100px;
   background-size: 700px 105px;
+   will-change: background-position, transform;
 }
 
 .animate-slime {
